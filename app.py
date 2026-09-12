@@ -33,8 +33,19 @@ if st.button("🚀 توليد دليل المشروع", type="primary"):
                     st.success("تم توليد التقرير بنجاح!")
                     result = response.json()
                     
+                    # معالجة النتيجة سواء كانت List أو Dict
+                    if isinstance(result, list) and len(result) > 0:
+                        first_item = result[0]
+                        if isinstance(first_item, dict):
+                            report_content = first_item.get("output", first_item.get("fullReport", first_item.get("text", str(first_item))))
+                        else:
+                            report_content = str(first_item)
+                    elif isinstance(result, dict):
+                        report_content = result.get("output", result.get("fullReport", result.get("text", str(result))))
+                    else:
+                        report_content = str(result)
+                        
                     # عرض التقرير النهائي
-                    report_content = result.get("output", result.get("fullReport", str(result)))
                     st.markdown(report_content)
                 else:
                     st.error(f"حدث خطأ أثناء الاتصال بالنظام: {response.status_code}")
